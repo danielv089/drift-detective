@@ -5,7 +5,12 @@ from datetime import datetime
 
 class DfSnapshot:
 
-    def __init__(self, df: pd.DataFrame = None, filepath: str = None, table_name: str = None):
+    def __init__(self, **kwargs):
+        
+        df = kwargs.get("df", None)
+        filepath = kwargs.get("filepath", None)
+        table_name = kwargs.get("table_name", None)
+
         if df is not None:
             self.df = df
             self.filepath = filepath if filepath else "unknown"
