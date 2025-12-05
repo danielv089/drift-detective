@@ -1,7 +1,9 @@
-import pandas as pd
 import json
-from pathlib import Path
+import os
 from datetime import datetime
+from pathlib import Path
+
+import pandas as pd
 
 class DfSnapshot:
 
@@ -22,6 +24,7 @@ class DfSnapshot:
         else:
             raise ValueError("You must provide either a DataFrame or a CSV file path.")
         self.version=1
+        self.snapshot_timestamp=datetime.now().isoformat()
         
     def check_columns(self):
         return list(self.df.columns)
@@ -36,16 +39,28 @@ class DfSnapshot:
         schema = {col: str(dtype) for col, dtype in self.df.dtypes.items()}
         return schema
     
-    def snapshot(self):
+    def snapshot_to_dict(self):
             snapshot = {
                 "table_name": self.name,
                 "filepath": self.filepath,
-                "snapshot_time": datetime.now().isoformat(),
+                "snapshot_time": self.snapshot_timestamp,
                 "version": self.version,
                 "column_count": self.num_columns(),
                 "row_count": self.num_rows(),
                 "schema": self.check_schema(),
                 }
-            
-            return json.dumps(snapshot, indent=4)
+            return snapshot
+
+    def snapshot_to_json(self):
+        snapshot_data=self.snapshot_to_dict()
+        return json.dumps(snapshot_data, indent=4)
+    
+    def snapshot_to_json(self):
+        snapshot_data=self.snapshot_to_json()
+        os.makedirs("snapshots", exist_ok=True)
+        snapshot_file = f"snapshots/{self.name}_snapshot_v{self.version}_{self.snapshot_timestamp}.json"
+        with open(snapshot_file, "w") as f:
+            json.dump(snapshot_data, f, indent=4)
+
+
 
