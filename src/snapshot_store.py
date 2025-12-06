@@ -2,10 +2,22 @@ import os
 
 class SnapshotStore:
 
+    def __init__(self, store_path):
+        self.store=store_path
+        self.store.makedirs(self.store, exist_ok=True)
 
-    def snapshot_to_json(self):
-        snapshot_data=self.snapshot_to_json()
-        os.makedirs("snapshots", exist_ok=True)
-        snapshot_file = f"snapshots/{self.name}_snapshot_v{self.version}_{self.snapshot_timestamp}.json"
-        with open(snapshot_file, "w") as f:
-            json.dump(snapshot_data, f, indent=4)
+
+    def load_snapshot(self):
+        pass
+    
+
+    def latest_snapshot(self):
+        pass
+
+    def list_snapshots(self):
+        pass
+
+    def versioning_snapshot(self):
+        pass
+
+    
