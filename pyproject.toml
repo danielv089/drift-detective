@@ -1,0 +1,35 @@
+[project]
+name = "drift_detective"
+version = "0.1.0"
+description = "A Python utility for DataFrame snapshots, schema tracking, and drift detection"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name="Daniel Varga", email="" }
+]
+
+license = { file="LICENSE" }
+keywords = ["dataframe", "snapshot", "schema", "drift", "pandas", "data engineering"]
+
+dependencies = [
+    "pandas>=2.0",
+]
+
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}    
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "black",
+    "mypy",
+    "flake8"
+]
+
