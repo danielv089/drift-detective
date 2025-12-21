@@ -7,23 +7,30 @@ import pandas as pd
 
 class DataFrameSnapshot:
 
-    def __init__(self, df: pd.DataFrame = None, filepath: str = None, table_name: str = None):
+    def __init__(self, table_name:str, df: pd.DataFrame = None, filepath: str = None, snapshots_dir: str="snapshots" ):
+
+        if not table_name:
+            raise ValueError("Table name must be provided.")
+        
+        self.table_name=table_name
+        
         if df is not None:
             self.df = df
             self.filepath = filepath if filepath else "unknown"
-            self.name = table_name if table_name else "unknown"
         elif filepath is not None:
             self.df = pd.read_csv(filepath)
             self.filepath = filepath
-            self.name = table_name if table_name else Path(filepath).name
         else:
             raise ValueError("You must provide either a DataFrame or a CSV file path.")
         
-        self.version=1
+        self.snapshots_dir = Path(snapshots_dir) / self.table_name
+        self.snapshots_dir.mkdir(parents=True, exist_ok=True)
+
         self.snapshot_timestamp=datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.version= self.schema_versioning()
 
     def __repr__(self):
-        return f"DfSnapshot(name={self.name}, filepath={self.filepath}, version={self.version}, snapshot_time={self.snapshot_timestamp})"
+        return f"DfSnapshot(name={self.table_name}, filepath={self.filepath}, version={self.version}, snapshot_time={self.snapshot_timestamp})"
         
     def get_columns(self):
         return list(self.df.columns)
@@ -40,7 +47,7 @@ class DataFrameSnapshot:
     
     def snapshot_to_dict(self):
             snapshot = {
-                "table_name": self.name,
+                "table_name": self.table_name,
                 "filepath": self.filepath,
                 "timestamp": self.snapshot_timestamp,
                 "version": self.version,
@@ -56,10 +63,36 @@ class DataFrameSnapshot:
     
     def save_snapshot(self):
         snapshot_data = self.snapshot_to_dict()
-        os.makedirs(f"snapshots/{self.name}", exist_ok=True)
-        snapshot_file = f"snapshots/{self.name}/{self.name}_v{self.version}_{self.snapshot_timestamp}.json"
+        snapshot_file = self.snapshots_dir / f"{self.table_name}_v{self.version}_{self.snapshot_timestamp}.json"
 
         with open(snapshot_file, "w") as f:
             json.dump(snapshot_data, f, indent=4)
+
+        return snapshot_file
+
+    def schema_versioning(self):
+        snapshot_files=list(self.snapshots_dir.glob(f"{self.table_name}_v*_*.json"))
+
+        if not snapshot_files:
+            return 1
+        
+        last_snapshot=None
+        last_version=0
+
+        for f in snapshot_files:
+            with open(f,"r") as jf:
+                data=json.load(jf)
+                version=data.get("version",0)
+                if version>last_version:
+                    last_version=version
+                    last_snapshot=data
+
+        last_schema=last_snapshot.get("schema",{})
+        current_schema=self.get_schema()
+
+        if last_schema != current_schema:
+            return last_version + 1
+        
+        return last_version
 
 
