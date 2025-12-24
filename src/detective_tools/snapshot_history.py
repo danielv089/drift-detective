@@ -17,6 +17,7 @@ class SnapshotHistory:
         )
 
     def list_snapshots(self):
+        
         if not self.snapshots_dir.exists():
             return []
         return sorted(
@@ -24,7 +25,9 @@ class SnapshotHistory:
         )
     
     def list_versions(self):
+
         versions = []
+
         for snapshot_file in self.snapshots_list:
             with open(snapshot_file, "r") as f:
                 snapshot = json.load(f)
@@ -32,12 +35,20 @@ class SnapshotHistory:
         return versions
     
     def get_version(self, version: int):
-        for snapshot_file in self.snapshots_list:
-            with open(snapshot_file, "r") as f:
-                snapshot = json.load(f)
-                if snapshot["version"] == version:
-                    return snapshot
-        return None
+            
+        version=int(version)
+
+        if version in self.versions:
+            for snapshot_file in self.snapshots_list:
+                with open(snapshot_file, "r") as f:
+                    snapshot = json.load(f)
+                    if snapshot["version"] == version:
+                        return snapshot
+        else:
+            print(f"Version {version} not found for table {self.table_name}.")
+            print(f"Available versions: {self.versions}")
+            return None
+                
         
     def timeline(self):
 
