@@ -1,1 +1,1 @@
-from .df_snapshot import DataFrameSnapshot
+from .df_snapshot import DfSnapshot

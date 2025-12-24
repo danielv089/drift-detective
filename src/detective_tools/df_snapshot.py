@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-class DataFrameSnapshot:
+class DfSnapshot:
 
     def __init__(self, table_name:str, df: pd.DataFrame = None, filepath: str = None, snapshots_dir: str="snapshots" ):
 
@@ -25,8 +25,9 @@ class DataFrameSnapshot:
         
         self.snapshots_dir = Path(snapshots_dir) / self.table_name
         self.snapshots_dir.mkdir(parents=True, exist_ok=True)
-
         self.snapshot_timestamp=datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.columns_removed=[]
+        self.columns_added=[]
         self.version= self.schema_versioning()
 
     def __repr__(self):
@@ -54,6 +55,8 @@ class DataFrameSnapshot:
                 "column_count": self.num_columns(),
                 "row_count": self.num_rows(),
                 "schema": self.get_schema(),
+                "columns_added": self.columns_added,
+                "columns_removed": self.columns_removed
                 }
             return snapshot
 
@@ -91,6 +94,8 @@ class DataFrameSnapshot:
         current_schema=self.get_schema()
 
         if last_schema != current_schema:
+            self.columns_removed = [col for col in last_schema if col not in current_schema]
+            self.columns_added = [col for col in current_schema if col not in last_schema]
             return last_version + 1
         
         return last_version
