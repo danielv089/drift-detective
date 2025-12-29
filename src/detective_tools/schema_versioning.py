@@ -1,7 +1,6 @@
 from pathlib import Path
 import json
 
-
 class SchemaVersioning:
 
     def __init__(self, table_name: str, snapshots_dir: str):
@@ -18,7 +17,6 @@ class SchemaVersioning:
     def get_columns_added(self):
          return self.columns_added
     
-
     def versioning(self, current_schema: dict):
 
         snapshot_files=list(self.snapshots_dir.glob(f"{self.table_name}_v*_*.json"))
