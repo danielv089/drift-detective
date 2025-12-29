@@ -28,7 +28,3 @@ class Snapshot(ABC):
     @abstractmethod
     def save_snapshot(self):
         pass
-
-    @abstractmethod
-    def schema_versioning(self):
-        pass

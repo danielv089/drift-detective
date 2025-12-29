@@ -5,7 +5,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from snapshot_base import Snapshot
+from .snapshot_base import Snapshot
+from .schema_versioning import SchemaVersioning
 
 class DfSnapshot(Snapshot):
 
@@ -28,9 +29,13 @@ class DfSnapshot(Snapshot):
         self.snapshots_dir = Path(snapshots_dir) / self.table_name
         self.snapshots_dir.mkdir(parents=True, exist_ok=True)
         self.snapshot_timestamp=datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.columns_removed=[]
-        self.columns_added=[]
-        self.version= self.schema_versioning()
+        
+        self.current_schema=self.get_schema()
+        
+        versioning = SchemaVersioning(self.table_name, self.snapshots_dir)
+        self.version=versioning.versioning(self.current_schema)
+        self.columns_added= versioning.get_columns_added()
+        self.columns_removed= versioning.get_columns_removed()
 
     def __repr__(self):
         return f"DfSnapshot(name={self.table_name}, filepath={self.filepath}, version={self.version}, snapshot_time={self.snapshot_timestamp})"
@@ -71,32 +76,5 @@ class DfSnapshot(Snapshot):
             json.dump(snapshot_data, f, indent=4)
 
         return snapshot_file
-
-    def schema_versioning(self):
-        snapshot_files=list(self.snapshots_dir.glob(f"{self.table_name}_v*_*.json"))
-
-        if not snapshot_files:
-            return 1
-        
-        last_snapshot=None
-        last_version=0
-
-        for f in snapshot_files:
-            with open(f,"r") as jf:
-                data=json.load(jf)
-                version=data.get("version",0)
-                if version>last_version:
-                    last_version=version
-                    last_snapshot=data
-
-        last_schema=last_snapshot.get("schema",{})
-        current_schema=self.get_schema()
-
-        if last_schema != current_schema:
-            self.columns_removed = [col for col in last_schema if col not in current_schema]
-            self.columns_added = [col for col in current_schema if col not in last_schema]
-            return last_version + 1
-        
-        return last_version
 
 
