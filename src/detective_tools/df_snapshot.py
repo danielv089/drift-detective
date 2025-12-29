@@ -5,14 +5,16 @@ from pathlib import Path
 
 import pandas as pd
 
-class DfSnapshot:
+from snapshot_base import Snapshot
+
+class DfSnapshot(Snapshot):
 
     def __init__(self, table_name:str, df: pd.DataFrame = None, filepath: str = None, snapshots_dir: str="snapshots" ):
 
         if not table_name:
             raise ValueError("Table name must be provided.")
         
-        self.table_name=table_name
+        super().__init__(table_name)
         
         if df is not None:
             self.df = df
@@ -32,9 +34,6 @@ class DfSnapshot:
 
     def __repr__(self):
         return f"DfSnapshot(name={self.table_name}, filepath={self.filepath}, version={self.version}, snapshot_time={self.snapshot_timestamp})"
-        
-    def get_columns(self):
-        return list(self.df.columns)
     
     def num_columns(self):
         return len(self.df.columns)
