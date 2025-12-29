@@ -86,3 +86,8 @@ class SnapshotHistory(Mapping):
                 print("    │ no schema changes")
 
         print("─" * 55 + "\n")
+
+    
+    def snapshot_diff(self):
+        pass
+    
