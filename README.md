@@ -8,6 +8,10 @@ It is designed for data workflows where table schemas evolve over time.
 
 The library focuses on schema-level changes and not row-level.
 
+Check out the package on PyPI:  
+
+👉 https://pypi.org/project/drift-detective/
+
 ## Key Features
 
 - JSON snapshot-based schema tracking
