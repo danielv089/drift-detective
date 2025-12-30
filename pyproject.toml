@@ -35,7 +35,7 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/danielv089"
-Repository = "https://github.com/danielv089"
-Documentation = "https://github.com/danielv089"
-Changelog= "https://github.com/danielv089"
+Repository = "https://github.com/danielv089/drift-detective"
+Documentation = "https://github.com/danielv089/drift-detective/blob/main/docs/DOCUMENTATION.md"
+Changelog= "https://github.com/danielv089/drift-detective/blob/main/CHANGELOG.md"
 
