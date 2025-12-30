@@ -1,0 +1,25 @@
+{
+    "table_name": "netflix_titles",
+    "filepath": "netflix_titles.csv",
+    "timestamp": "20251230_163649",
+    "version": 2,
+    "column_count": 11,
+    "row_count": 8807,
+    "schema": {
+        "show_id": "object",
+        "type": "object",
+        "director": "object",
+        "cast": "object",
+        "country": "object",
+        "date_added": "object",
+        "release_year": "int64",
+        "rating": "object",
+        "duration": "object",
+        "listed_in": "object",
+        "description": "object"
+    },
+    "columns_added": [],
+    "columns_removed": [
+        "title"
+    ]
+}

@@ -15,7 +15,7 @@ class SchemaReport:
         self._latest_snapshot = self.history[max(self.history)]
         self._first_snapshot = self.history[1]
 
-    def struct_report(self):
+    def dict_report(self):
         """Generates a structured report of the snapshot history and differences.
         
         Returns:

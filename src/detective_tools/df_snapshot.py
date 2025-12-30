@@ -36,8 +36,8 @@ class DfSnapshot(Snapshot):
         self.snapshots_dir = Path(snapshots_dir) / self.table_name
         self.snapshots_dir.mkdir(parents=True, exist_ok=True)
         self._snapshot_timestamp=datetime.now().strftime("%Y%m%d_%H%M%S")
-        
-        self._current_schema=self.get_schema()
+
+        self.current_schema=self.get_schema()
         
         versioning = SchemaVersioning(self.table_name, self.snapshots_dir)
         self._version=versioning.versioning(self.current_schema)
@@ -45,7 +45,7 @@ class DfSnapshot(Snapshot):
         self._columns_removed= versioning.get_columns_removed()
 
     def __repr__(self):
-        return f"DfSnapshot(name={self.table_name}, filepath={self.filepath}, version={self.version}, snapshot_time={self.snapshot_timestamp})"
+        return f"DfSnapshot(name={self.table_name}, filepath={self.filepath}, version={self._version}, snapshot_time={self._snapshot_timestamp})"
     
     def num_columns(self):
         return len(self.df.columns)
@@ -69,7 +69,7 @@ class DfSnapshot(Snapshot):
                 "version": self._version,
                 "column_count": self.num_columns(),
                 "row_count": self.num_rows(),
-                "schema": self._current_schema,
+                "schema": self.current_schema,
                 "columns_added": self._columns_added,
                 "columns_removed": self._columns_removed
                 }

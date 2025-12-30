@@ -5,14 +5,14 @@ description = "A Python utility for DataFrame snapshots, schema tracking, and dr
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
-    { name="Daniel Varga", email="" }
+    { name="Daniel Varga", email="email@example.com" }
 ]
 
 license = { file="Apache-2.0" }
 keywords = ["dataframe", "snapshot", "schema", "drift", "pandas", "data engineering"]
 
 dependencies = [
-    "pandas>=2.0",
+    "pandas>=2.0"
 ]
 
 [build-system]
@@ -34,8 +34,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = ""
-Repository = ""
-Documentation = ""
-Changelog= ""
+Homepage = "https://github.com/danielv089"
+Repository = "https://github.com/danielv089"
+Documentation = "https://github.com/danielv089"
+Changelog= "https://github.com/danielv089"
 
