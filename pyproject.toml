@@ -1,5 +1,5 @@
 [project]
-name = "drift_detective"
+name = "drift-detective"
 version = "0.1.0"
 description = "A Python utility for DataFrame snapshots, schema tracking, and drift detection"
 readme = "README.md"
@@ -8,7 +8,7 @@ authors = [
     { name="Daniel Varga", email="" }
 ]
 
-license = { file="LICENSE" }
+license = { file="Apache-2.0" }
 keywords = ["dataframe", "snapshot", "schema", "drift", "pandas", "data engineering"]
 
 dependencies = [
@@ -32,4 +32,10 @@ dev = [
     "mypy",
     "flake8"
 ]
+
+[project.urls]
+Homepage = ""
+Repository = ""
+Documentation = ""
+Changelog= ""
 

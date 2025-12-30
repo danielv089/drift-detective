@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+
 from collections.abc import Mapping
 
 class SnapshotHistory(Mapping):
@@ -55,14 +56,31 @@ class SnapshotHistory(Mapping):
 
     def versions(self):
         return sorted(self._index)
+    
+    def dict_timeline(self):
+        timeline = []
 
-    def timeline(self):
+        for version in self:
+            snapshot = self[version]
+            entry = {
+                "version": version,
+                "timestamp": snapshot["timestamp"],
+                "column_count": len(snapshot.get("schema", [])),
+                "row_count": snapshot.get("row_count", 0),
+                "columns_added": snapshot.get("columns_added", []),
+                "columns_removed": snapshot.get("columns_removed", []),
+            }
+            timeline.append(entry)
+
+        return timeline
+
+    def pretty_timeline(self):
         if not self._index:
             print("No snapshots found.")
             return
 
         print(f"\nSnapshot Timeline for table: {self.table_name}")
-        print("─" * 55)
+        print("─" * 60)
 
         for version in self:
             snapshot = self[version]
@@ -85,5 +103,55 @@ class SnapshotHistory(Mapping):
             if not added and not removed:
                 print("    │ no schema changes")
 
-        print("─" * 55 + "\n")
+        print("─" * 60 + "\n")
+
+    def dict_latest(self):
+        all_columns_added=[]
+        all_columns_removed=[]
+
+        for version in self:
+            snapshot=self[version]
+
+            all_columns_added.extend(snapshot.get("columns_added",[]))
+            all_columns_removed.extend(snapshot.get("columns_removed",[]))
+
+        latest_version=max(self._index)
+        latest_snapshot= self[latest_version]
+        latest_snapshot_columns= latest_snapshot.get("schema")
+
+        report={
+            "version": latest_version,
+            "timestamp": latest_snapshot["timestamp"],
+            "column_count": latest_snapshot["column_count"],
+            "row_count": latest_snapshot["row_count"],
+            "current_columns": latest_snapshot_columns,
+            "all_added_columns": all_columns_added,
+            "all_removed_columns": all_columns_removed,
+        }
+
+        return report
+
+    def pretty_latest(self):
+        all_columns_added=[]
+        all_columns_removed=[]
+
+        for version in self:
+            snapshot=self[version]
+
+            all_columns_added.extend(snapshot.get("columns_added",[]))
+            all_columns_removed.extend(snapshot.get("columns_removed",[]))
+
+        latest_version=max(self._index)
+        latest_snapshot= self[latest_version]
+        latest_snapshot_columns= latest_snapshot.get("schema")
+
+        print(f"\n Latest Snapshot for table: {self.table_name}")
+        print("─" * 60)
+        print(f"v{version}  ●  {latest_snapshot['timestamp']}")
+        print(f"    |   columns: {latest_snapshot['column_count']}")
+        print(f"    |   rows: {latest_snapshot['row_count']}")
+        print(f"    |   current columns: {', '.join(latest_snapshot_columns)}")
+        print(f"    | + all added columns: {', '.join(all_columns_added)}")
+        print(f"    │ - all removed columns: {', '.join(all_columns_removed)}")
+        print("─" * 60)
     
