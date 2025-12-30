@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 class SchemaVersioning:
+    """Class to handle schema versioning for database tables."""
 
     def __init__(self, table_name: str, snapshots_dir: str):
         self.table_name = table_name

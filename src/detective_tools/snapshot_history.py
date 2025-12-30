@@ -4,6 +4,20 @@ from pathlib import Path
 from collections.abc import Mapping
 
 class SnapshotHistory(Mapping):
+    """Manages the history of snapshots for a specific table.
+    Each snapshot is stored as a JSON file in a directory structure like:
+    snapshots/
+        table_name/
+            snapshot_v1.json
+            snapshot_v2.json
+    Attributes:
+        table_name (str): The name of the table.
+        snapshots_dir (Path): The directory where snapshots are stored.
+    Methods:
+        __getitem__(version): Retrieve a snapshot by its version number.
+        __iter__(): Iterate over available snapshot versions.
+        __len__(): Get the total number of snapshots.   
+            ..."""
 
     def __init__(self, table_name: str, snapshots_dir: str):
         self.table_name = table_name
@@ -58,6 +72,10 @@ class SnapshotHistory(Mapping):
         return sorted(self._index)
     
     def dict_timeline(self):
+        """Returns the snapshot timeline as a list of dictionaries.
+        Returns:
+            List[Dict]: A list of dictionaries representing the snapshot timeline
+        """
         timeline = []
 
         for version in self:
@@ -75,6 +93,7 @@ class SnapshotHistory(Mapping):
         return timeline
 
     def pretty_timeline(self):
+        """Prints a human-readable snapshot timeline to the console."""
         if not self._index:
             print("No snapshots found.")
             return
@@ -106,6 +125,11 @@ class SnapshotHistory(Mapping):
         print("─" * 60 + "\n")
 
     def dict_latest(self):
+        """Returns the latest snapshot as a dictionary.
+        Returns:
+            Dict: A dictionary representing the latest snapshot
+            """
+        
         all_columns_added=[]
         all_columns_removed=[]
 
@@ -132,6 +156,7 @@ class SnapshotHistory(Mapping):
         return report
 
     def pretty_latest(self):
+        """Prints a human-readable latest snapshot report to the console."""
         all_columns_added=[]
         all_columns_removed=[]
 

@@ -9,6 +9,13 @@ from .snapshot_base import Snapshot
 from .schema_versioning import SchemaVersioning
 
 class DfSnapshot(Snapshot):
+    """Class to create and manage snapshots of pandas DataFrames.
+    Attributes:
+        table_name (str): Name of the DataFrame/table.
+        df (pd.DataFrame): The pandas DataFrame to snapshot.
+        filepath (str): Optional file path from which the DataFrame was loaded.
+        snapshots_dir (str): Directory to store snapshots
+        """
 
     def __init__(self, table_name:str, df: pd.DataFrame = None, filepath: str = None, snapshots_dir: str="snapshots" ):
 
@@ -51,6 +58,10 @@ class DfSnapshot(Snapshot):
         return schema
     
     def snapshot_to_dict(self):
+            """Create a dictionary representation of the snapshot.
+            Returns:
+                dict: A dictionary containing snapshot details.
+            """
             snapshot = {
                 "table_name": self.table_name,
                 "filepath": self.filepath,
@@ -65,10 +76,17 @@ class DfSnapshot(Snapshot):
             return snapshot
 
     def snapshot_to_json(self):
+        """Create a JSON representation of the snapshot.
+        Returns:
+            str: A JSON string containing snapshot details.
+        """
         snapshot_data=self.snapshot_to_dict()
         return json.dumps(snapshot_data, indent=4)
     
     def save_snapshot(self):
+        """Save the snapshot to a versioned JSON file.
+         Returns: The path to the saved snapshot file.
+         """
         snapshot_data = self.snapshot_to_dict()
         snapshot_file = self.snapshots_dir / f"{self.table_name}_v{self._version}_{self._snapshot_timestamp}.json"
 

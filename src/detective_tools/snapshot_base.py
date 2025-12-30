@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 class Snapshot(ABC):
+    """Abstract base class for data snapshots."""
 
     def __init__(self, table_name: str):
         self.table_name = table_name
