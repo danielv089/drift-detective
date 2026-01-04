@@ -1,6 +1,6 @@
 [project]
 name = "drift-detective"
-version = "0.1.0"
+version = "0.2.0"
 description = "A Python utility for DataFrame snapshots, schema tracking, and drift detection"
 readme = "README.md"
 requires-python = ">=3.10"

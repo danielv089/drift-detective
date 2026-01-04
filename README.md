@@ -10,6 +10,10 @@ The library focuses on schema-level changes and not row-level.
 
 You can find the package on PyPI here: [drift-detective](https://pypi.org/project/drift-detective/0.1.0/)
 
+[Documentation](/docs/DOCUMENTATION.md)
+
+[Changelog](/docs/CHANGELOG.md)
+
 ## Key Features
 
 - JSON snapshot-based schema tracking
