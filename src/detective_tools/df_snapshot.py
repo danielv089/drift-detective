@@ -66,7 +66,7 @@ class DfSnapshot(Snapshot):
 
     # Snapshot creation and saving
     #-----------------------------------------
-    def create_snapshot(sefl) -> SnapshotDataModel:
+    def create_snapshot(self) -> SnapshotDataModel:
         """Create a snapshot data model instance.
         Returns:
             SnapshotDataModel: An instance containing snapshot details.

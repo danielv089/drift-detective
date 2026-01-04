@@ -19,11 +19,7 @@ class Snapshot(ABC):
         pass
 
     @abstractmethod
-    def snapshot_to_dict(self):
-        pass
-
-    @abstractmethod
-    def snapshot_to_json(self):
+    def create_snapshot(self):
         pass
 
     @abstractmethod
