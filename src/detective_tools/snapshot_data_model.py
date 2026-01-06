@@ -5,12 +5,12 @@ from typing import Dict, List
 
 @dataclass(frozen=True, order=True)
 class SnapshotDataModel:
-    """Data model representing a snapshot of a DataFrame."""
+    """Data model representing a snapshot."""
 
     table_name: str
     filepath: str
     timestamp: datetime
-    verion: int
+    version: int
     column_count: int
     row_count: int
     schema: Dict[str, str]
@@ -24,7 +24,7 @@ class SnapshotDataModel:
             "table_name": self.table_name,
             "filepath": self.filepath,
             "timestamp": self.timestamp.isoformat(),
-            "version": self.verion,
+            "version": self.version,
             "column_count": self.column_count,
             "row_count": self.row_count,
             "schema": self.schema,
