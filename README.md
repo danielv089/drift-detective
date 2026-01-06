@@ -8,11 +8,16 @@ It is designed for data workflows where table schemas evolve over time.
 
 The library focuses on schema-level changes and not row-level.
 
-You can find the package on PyPI here: [drift-detective](https://pypi.org/project/drift-detective/0.1.0/)
+The current stable version of the package can be downloaded from PyPI, while the repository is actively under development.
 
-[Documentation](/docs/DOCUMENTATION.md)
+[![Static Badge](https://img.shields.io/badge/Drift%20Detective%20PyPI-blue?style=for-the-badge&logo=python&logoColor=yellow)
+](https://pypi.org/project/drift-detective/0.1.0/)
 
-[Changelog](/docs/CHANGELOG.md)
+[![Static Badge](https://img.shields.io/badge/Documentation-blue?style=for-the-badge)
+](/docs/DOCUMENTATION.md)
+
+[![Static Badge](https://img.shields.io/badge/changelog-blue?style=for-the-badge)
+](/docs/CHANGELOG.md)
 
 ## Key Features
 

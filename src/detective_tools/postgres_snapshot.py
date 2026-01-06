@@ -33,7 +33,7 @@ class PsqlSnapshot(Snapshot):
         self._snapshot_timestamp: Optional[datetime] = None
         self._columns_removed: list[str] = []
 
-    def _make_connection(self):
+    def _make_connection(self) -> None:
 
         try:
             self.conn=psycopg2.connect(**self.connection_params)

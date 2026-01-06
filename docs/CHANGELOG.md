@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added PsqlSnapshot class to create and manage snapshots of PostgreSQL tables.
+- Added the compute_snapshot() method to support lazy evaluation.
+- Added type hints.
 
 ### Changed
 - SchemaVersioning has been updated and separated to dataframe and PostgreSql versioning classes to correctly detect added and removed columns for both.
-- compute_snapshot() method added. 
-- Added type hints.
 
 ## [v0.2.0] Unreleased
 
