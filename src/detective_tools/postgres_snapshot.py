@@ -4,24 +4,28 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-import psycopg2
-from psycopg2 import sql
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import make_url
 
-from .snapshot_base import Snapshot
 from .schema_versioning import SchemaVersioning
+from .snapshot_base import Snapshot
 from .snapshot_data_model import SnapshotDataModel
-
 class PsqlSnapshot(Snapshot):
+    """Class to handle PostgreSQL table snapshots.
+    Attributes:
+        table_name (str): Name of the PostgreSQL table.
+        connection_string (str): Connection string for the PostgreSQL database.
+        snapshots_dir (str): Directory to store snapshots.
+    """
 
-
-    def __init__(self, table_name:str, connection_params: dict, snapshots_dir:str= "snapshots"):
-        if not table_name and connection_params:
+    def __init__(self, table_name:str, connection_string: str, snapshots_dir:str= "snapshots"):
+        if not table_name and connection_string:
             raise ValueError("Table name and connection parameters must be provided.")
         
         super().__init__(table_name)
-        self.connection_params= connection_params
+        self.connection_string= connection_string
 
-        self._make_connection()
+        self._connect_postgres()
 
         self.snapshots_dir = Path(snapshots_dir) / self.table_name
         self.snapshots_dir.mkdir(parents=True, exist_ok=True)
@@ -33,58 +37,74 @@ class PsqlSnapshot(Snapshot):
         self._snapshot_timestamp: Optional[datetime] = None
         self._columns_removed: list[str] = []
 
-    def _make_connection(self) -> None:
-
+    def _connect_postgres(self) -> None:
+        """Establish connection to the PostgreSQL database."""
         try:
-            self.conn=psycopg2.connect(**self.connection_params)
-            self.cursor=self.conn.cursor()
+            self.engine = create_engine(self.connection_string)
         except Exception as e:
             raise ConnectionError("Failed to connect to PostgreSQL database.") from e
-    
-    def __repr__(self):
+
+    def __repr__(self) -> str:
         return f"PsqlSnapshot(table_name={self.table_name})"
-    
+
+ 
+    #Helper functions
+    #-----------------------------------------
     def num_columns(self) -> int:
-        query= sql.SQL("SELECT * FROM {} LIMIT 0").format(sql.Identifier(self.table_name))
-        self.cursor.execute(query)
-        return len(self.cursor.description)
-    
+        """Get the number of columns in the PostgreSQL table."""
+        with self.engine.connect() as conn:
+            result= conn.execute(text(f"SELECT * FROM {self.table_name} LIMIT 0;"))
+            num_col = len(result.keys())
+        return num_col
+
     def num_rows(self) -> int:
-        query= sql.SQL("SELECT COUNT(*) FROM {}").format(sql.Identifier(self.table_name))
-        self.cursor.execute(query)
-        result= self.cursor.fetchone()
-        return result[0] if result else 0
-    
+        """Get the number of rows in the PostgreSQL table."""
+        with self.engine.connect() as conn:
+            result= conn.execute(text(f"SELECT COUNT(*) FROM {self.table_name}"))
+            num_rows=result.scalar()
+        return num_rows
 
-    def get_schema(self) -> dict[str, str]:
-        query = sql.SQL(
-            "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = {table}"
-        ).format(table=sql.Literal(self.table_name))
+    def get_schema(self) -> dict:
+        """Retrieve the schema of the PostgreSQL table.
+        Returns:
+            dict: A dictionary mapping column names to their data types.
+        """
+        with self.engine.connect() as conn:
+            result = conn.execute(
+                text("""
+                SELECT column_name, data_type
+                FROM information_schema.columns
+                WHERE table_name = :table
+                  AND table_schema = 'public'
+                """),
+                {"table": self.table_name}
+            )
 
-        self.cursor.execute(query)
-        columns = self.cursor.fetchall()
-        schema = {col[0]: col[1] for col in columns}
-        return schema
+            schema = {row[0].strip(): row[1] for row in result.fetchall()}
+            return schema
 
-    
-    def get_filepath(self) -> Path:
-        host = self.connection_params.get("host", "localhost")
-        port = self.connection_params.get("port", 5432)
-        dbname = self.connection_params.get("dbname", "unknown_db")
-        user = self.connection_params.get("user", "unknown_user")
-        
+    def get_filepath(self) -> str:
+        """Generate a pseudo-filepath for the PostgreSQL table snapshot."""
+        url=make_url(self.connection_string)
 
-        pseudo_path = f"{host}_{port}_{dbname}_{user}"
-        self.filepath = pseudo_path
+        host = url.host or "localhost"
+        port = url.port or 5432
+        dbname = url.database or "unknown_db"
+        pseudo_path = f"{host}_{port}_{dbname}_{self.table_name}"
+
+        self.filepath=pseudo_path
         return self.filepath
     
+        # Snapshot creation and saving
+    #-----------------------------------------
+
     def compute_snapshot(self) -> None:
         """Compute snapshot details including versioning and schema changes."""
         self._snapshot_timestamp= datetime.now()
 
         self.current_schema= self.get_schema()
 
-        versioning = PsqlSchemaVersioning(self.table_name, self.snapshots_dir)
+        versioning = SchemaVersioning(self.table_name, self.snapshots_dir)
         self._version=versioning.versioning(self.current_schema)
         self._columns_added= versioning.get_columns_added()
         self._columns_removed= versioning.get_columns_removed()
@@ -118,4 +138,3 @@ class PsqlSnapshot(Snapshot):
             json.dump(snapshot.to_dict(), f, indent=4)
 
         return snapshot_file
-

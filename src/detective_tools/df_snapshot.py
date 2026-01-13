@@ -6,7 +6,7 @@ from typing import Optional
 import pandas as pd
 
 from .snapshot_base import Snapshot
-from .schema_versioning import DfSchemaVersioning
+from .schema_versioning import SchemaVersioning
 from .snapshot_data_model import SnapshotDataModel
 
 class DfSnapshot(Snapshot):
@@ -81,7 +81,7 @@ class DfSnapshot(Snapshot):
 
         self._current_schema= self.get_schema()
 
-        versioning = DfSchemaVersioning(self.table_name, self.snapshots_dir)
+        versioning = SchemaVersioning(self.table_name, self.snapshots_dir)
         self._version=versioning.versioning(self._current_schema)
         self._columns_added= versioning.get_columns_added()
         self._columns_removed= versioning.get_columns_removed()
