@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from detective_tools.df_snapshot import DfSnapshot
-from detective_tools.schema_versioning import DfSchemaVersioning
+from detective_tools.schema_versioning import SchemaVersioning
 
 
 #Fixtures for test data
