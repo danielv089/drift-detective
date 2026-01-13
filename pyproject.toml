@@ -12,7 +12,8 @@ license = { file="Apache-2.0" }
 keywords = ["dataframe", "snapshot", "schema", "drift", "pandas", "data engineering"]
 
 dependencies = [
-    "pandas>=2.0"
+    "pandas>=2.0",
+    "SQLAlchemy>=2.0"
 ]
 
 [build-system]
