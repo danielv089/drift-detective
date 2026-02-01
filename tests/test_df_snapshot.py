@@ -41,7 +41,7 @@ def test_load_from_csv_file(sample_csv_file, sample_df, tmp_path):
     assert snapshot.df.equals(sample_df)
     assert snapshot.filepath == str(sample_csv_file)
 
-#Snapshot computation and saving tests
+#Snapshot helpers Tests
 #-----------------------------
 def test_load_without_dataframe_or_filepath(tmp_path):
     with pytest.raises(ValueError, match="You must provide either a DataFrame or a CSV file path."):
@@ -63,7 +63,7 @@ def test_get_schema(sample_df, tmp_path):
 
     expected_schema= {
         "id": "int64",
-        "name": "object"
+        "name": "str"
     }
 
     assert snapshot.get_schema() == expected_schema
@@ -74,6 +74,9 @@ def test_empty_dataframe(empty_df, tmp_path):
     assert snapshot.num_rows() == 0
     assert snapshot.num_columns() == 0
     assert snapshot.get_schema() == {}
+
+#Snapshot computation and saving tests
+#-----------------------------
 
 def test_compute_snapshot(sample_df, tmp_path):
     snapshot= DfSnapshot(table_name="users", df=sample_df, snapshots_dir=tmp_path)
