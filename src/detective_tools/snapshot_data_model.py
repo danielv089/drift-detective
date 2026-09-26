@@ -7,6 +7,7 @@ from typing import Dict, List
 class SnapshotDataModel:
     """Data model representing a snapshot."""
 
+    snapshot_id: str
     table_name: str
     filepath: str
     timestamp: datetime
@@ -21,6 +22,7 @@ class SnapshotDataModel:
         """Convert the SnapshotDataModel to a dictionary."""
 
         return {
+            "snapshot_id": self.snapshot_id,
             "table_name": self.table_name,
             "filepath": self.filepath,
             "timestamp": self.timestamp.isoformat(),
@@ -31,4 +33,3 @@ class SnapshotDataModel:
             "columns_added": self.columns_added,
             "columns_removed": self.columns_removed,
         }
-    
