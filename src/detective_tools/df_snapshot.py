@@ -49,16 +49,19 @@ class DfSnapshot(Snapshot):
         if filepath is not None:
             path= Path(filepath)
             if not path.exists():
+                self.logger.error(f"File not found: {filepath}")
                 raise FileNotFoundError(f"File not found: {filepath}")
 
             try:
                 self.df=pd.read_csv(path)
             except Exception as e:
+                self.logger.error(f"Failed to load CSV: {filepath}. Error: {e}")
                 raise ValueError(f"Failed to load CSV: {filepath}") from e
 
             self.filepath = filepath
             return
-
+        
+        self.logger.error("No DataFrame or CSV file path provided.")
         raise ValueError("You must provide either a DataFrame or a CSV file path.")
 
     def __repr__(self):
@@ -81,10 +84,17 @@ class DfSnapshot(Snapshot):
 
     def compute_snapshot(self) -> None:
         """Compute snapshot details including versioning and schema changes."""
+
         self._snapshot_timestamp= datetime.now()
         self._current_schema= self.get_schema()
-        versioning = SchemaVersioning(self.table_name, self.snapshots_dir)
-        self._version=versioning.versioning(self._current_schema)
+
+        try:
+            versioning = SchemaVersioning(self.table_name, self.snapshots_dir)
+            self._version=versioning.versioning(self._current_schema)
+        except Exception as e:
+            self.logger.error(f"Error computing snapshot: {e}")
+            raise RuntimeError("Failed to compute snapshot details.") from e
+
         self._columns_added= versioning.get_columns_added()
         self._columns_removed= versioning.get_columns_removed()
 
@@ -110,17 +120,17 @@ class DfSnapshot(Snapshot):
     def save_snapshot(self) -> Path:
         """Save the snapshot data model to a JSON file.
         """
-
+        snapshot=self.create_snapshot()
         snapshot_file=f"{self.table_name}_v{self._version}_{self._snapshot_timestamp}_{self.snapshot_id}.json"
+        snapshot_file=self.snapshots_dir / snapshot_file
+        try:
+            with open(snapshot_file, "w") as f:
+                json.dump(snapshot.to_dict(), f, indent=4)
+        except Exception as e:
+            self.logger.error(f"Failed to save snapshot to {snapshot_file}: {e}")
+            raise IOError(f"Failed to save snapshot to {snapshot_file}") from e
 
         self.logger.info(f"Snapshot created: {snapshot_file}")
-
-        snapshot=self.create_snapshot()
-        snapshot_file=self.snapshots_dir / snapshot_file
-
-        with open(snapshot_file, "w") as f:
-            json.dump(snapshot.to_dict(), f, indent=4)
-
         return snapshot_file
 
 
