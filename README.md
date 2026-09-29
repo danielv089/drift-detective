@@ -164,8 +164,9 @@ This project is in an early stage.
 The core functionality for schema snapshotting, history tracking, comparison, and reporting is complete and usable.
 
 Planned improvements:
-- Add unit test for core components
-- SQL snapshot support (PostgreSQL)
+- Add unit test for core components - In Progress
+- SQL snapshot support (PostgreSQL) - DONE
+- Add logging - In Progress
 - Expanded documentation and examples
 
 ## 🧰 Tech Stack
