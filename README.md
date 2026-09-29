@@ -12,10 +12,8 @@ The current stable version of the package can be downloaded from PyPI, while the
 
 [![Static Badge](https://img.shields.io/badge/Drift%20Detective%20PyPI-blue?style=for-the-badge&logo=python&logoColor=yellow)
 ](https://pypi.org/project/drift-detective/0.1.0/)
-
 [![Static Badge](https://img.shields.io/badge/Documentation-blue?style=for-the-badge)
 ](/docs/DOCUMENTATION.md)
-
 [![Static Badge](https://img.shields.io/badge/changelog-blue?style=for-the-badge)
 ](/docs/CHANGELOG.md)
 
